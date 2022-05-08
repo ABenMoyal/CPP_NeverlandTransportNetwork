@@ -1,0 +1,24 @@
+# ninja log v5
+17	143	6733659730298147	CMakeFiles/hw2.dir/Graph/Graph.cpp.obj	5471eda2d307a271
+4	689	6737153549429972	CMakeFiles/hw2.dir/main.cpp.obj	80c182a10f645b04
+23	927	6737148435046178	CMakeFiles/hw2.dir/FileReader.cpp.obj	a02f9ecafc75acb9
+23	798	6736961666607178	CMakeFiles/hw2.dir/Utils/Config.cpp.obj	f7355771d79ca142
+849	1082	6737153553311978	hw2.exe	c8b0d77c8a26e4eb
+19	849	6737153551023022	CMakeFiles/hw2.dir/Terminal/Terminal.cpp.obj	65e8e4fe578c1757
+22	829	6737153550823595	CMakeFiles/hw2.dir/Simulation.cpp.obj	1b7a4e61d1575942
+2	328	6737163050273142	build.ninja	d78cca0696a6230b
+7	905	6737163060146771	CMakeFiles/hw2.dir/main.cpp.obj	80c182a10f645b04
+4	972	6737163060844899	CMakeFiles/hw2.dir/Utils/FileReader.cpp.obj	c5589bfbddd93634
+13	1063	6737163061771321	CMakeFiles/hw2.dir/Simulation.cpp.obj	1b7a4e61d1575942
+10	1066	6737163061791273	CMakeFiles/hw2.dir/Terminal/Terminal.cpp.obj	65e8e4fe578c1757
+1066	1306	6737163064147608	hw2.exe	b822d56d1ef6f00e
+4	706	6737165339554641	CMakeFiles/hw2.dir/main.cpp.obj	80c182a10f645b04
+20	839	6737165340891066	CMakeFiles/hw2.dir/Simulation.cpp.obj	1b7a4e61d1575942
+23	876	6737165341260526	CMakeFiles/hw2.dir/Terminal/Terminal.cpp.obj	65e8e4fe578c1757
+876	1111	6737165343574098	hw2.exe	b822d56d1ef6f00e
+4	744	6737165779562792	CMakeFiles/hw2.dir/Terminal/Terminal.cpp.obj	65e8e4fe578c1757
+744	986	6737165781949938	hw2.exe	b822d56d1ef6f00e
+4	749	6737166488397162	CMakeFiles/hw2.dir/Terminal/Terminal.cpp.obj	65e8e4fe578c1757
+749	987	6737166490733211	hw2.exe	b822d56d1ef6f00e
+4	722	6737166698994959	CMakeFiles/hw2.dir/Terminal/Terminal.cpp.obj	65e8e4fe578c1757
+722	958	6737166701311810	hw2.exe	b822d56d1ef6f00e
