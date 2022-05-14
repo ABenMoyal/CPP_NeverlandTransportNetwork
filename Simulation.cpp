@@ -38,6 +38,7 @@ void Simulation::Start(int argc, char *argv[]) {
     while (true) {
         cmd = terminal.GetNextTerminalCommand();
         if (cmd.command_title == "EXIT")break;
+        // TODO: Add switch-case according to command_title: adir
         terminal.ShowOutput("Hello");
     }
 }

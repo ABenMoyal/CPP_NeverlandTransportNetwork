@@ -16,5 +16,4 @@ public:
     void ShowOutput(const string& outputLine);
 };
 
-
 #endif //HW2_TERMINAL_H

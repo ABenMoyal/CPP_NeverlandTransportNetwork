@@ -85,6 +85,12 @@ build CMakeFiles/hw2.dir/Terminal/Terminal.cpp.obj: CXX_COMPILER__hw2_Debug C$:/
   OBJECT_DIR = CMakeFiles\hw2.dir
   OBJECT_FILE_DIR = CMakeFiles\hw2.dir\Terminal
 
+build CMakeFiles/hw2.dir/TransportNetwork/TransportNetwork.cpp.obj: CXX_COMPILER__hw2_Debug C$:/Users/adirr/CLionProjects/hw2/TransportNetwork/TransportNetwork.cpp || cmake_object_order_depends_target_hw2
+  DEP_FILE = CMakeFiles\hw2.dir\TransportNetwork\TransportNetwork.cpp.obj.d
+  FLAGS = -g -std=gnu++14
+  OBJECT_DIR = CMakeFiles\hw2.dir
+  OBJECT_FILE_DIR = CMakeFiles\hw2.dir\TransportNetwork
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target hw2
@@ -93,7 +99,7 @@ build CMakeFiles/hw2.dir/Terminal/Terminal.cpp.obj: CXX_COMPILER__hw2_Debug C$:/
 #############################################
 # Link the executable hw2.exe
 
-build hw2.exe: CXX_EXECUTABLE_LINKER__hw2_Debug CMakeFiles/hw2.dir/main.cpp.obj CMakeFiles/hw2.dir/Utils/FileReader.cpp.obj CMakeFiles/hw2.dir/Graph/Graph.cpp.obj CMakeFiles/hw2.dir/Utils/Config.cpp.obj CMakeFiles/hw2.dir/Simulation.cpp.obj CMakeFiles/hw2.dir/Terminal/Terminal.cpp.obj
+build hw2.exe: CXX_EXECUTABLE_LINKER__hw2_Debug CMakeFiles/hw2.dir/main.cpp.obj CMakeFiles/hw2.dir/Utils/FileReader.cpp.obj CMakeFiles/hw2.dir/Graph/Graph.cpp.obj CMakeFiles/hw2.dir/Utils/Config.cpp.obj CMakeFiles/hw2.dir/Simulation.cpp.obj CMakeFiles/hw2.dir/Terminal/Terminal.cpp.obj CMakeFiles/hw2.dir/TransportNetwork/TransportNetwork.cpp.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\hw2.dir
