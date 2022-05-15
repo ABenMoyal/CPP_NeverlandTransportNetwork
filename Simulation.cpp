@@ -3,9 +3,42 @@
 //
 
 #include "Simulation.h"
-#include "Utils/UtilsFunctions.h"
 #include "Utils/FileReader.h"
 #include <vector>
+
+Simulation::Simulation(int argc, char *argv[]) {
+    ParseArgs(argc, argv);
+    config = FileReader::ReadConfigFile(config_file_name);
+    for (const string &input_file_name: input_files) {
+        try {
+            FileReader::ReadInputFileAndUpdateNetwork(input_file_name, transportNetwork, config);
+        }
+        catch (exception &e) {
+            cout << "Error on FileReader::ReadInputFileAndUpdateGraph. Reason: " << e.what() << endl;
+            exit(1);
+        }
+    }
+}
+
+void Simulation::Start() {
+    TerminalCommand cmd;
+    while (true) {
+        cmd = terminal.GetNextTerminalCommand();
+        if (cmd.command_title == "EXIT")break;
+        else if (cmd.command_title == "load") {
+            try {
+                FileReader::ReadInputFileAndUpdateNetwork(cmd.args[0], transportNetwork, config);
+            }
+            catch (exception &e) {
+                terminal.ShowOutput(e.what());
+            }
+        } else if (cmd.command_title == "inbound") transportNetwork.inbound(cmd.args[0], terminal);
+        else if (cmd.command_title == "outbound") transportNetwork.outbound(cmd.args[0], terminal);
+        else if (cmd.command_title == "uniExpress");
+        else if (cmd.command_title == "multiExpress");
+        else if (cmd.command_title == "print");
+    }
+}
 
 void SetFlags(bool &found_i, bool &found_c, bool &found_o, char &inside_char, const string &current_arg) {
     /*
@@ -29,20 +62,6 @@ void SetFlags(bool &found_i, bool &found_c, bool &found_o, char &inside_char, co
     } else throw runtime_error("Error: Unknown argument " + current_arg);
 }
 
-void Simulation::Start(int argc, char *argv[]) {
-    ParseArgs(argc, argv);
-    config = FileReader::ReadConfigFile(config_file_name);
-    for (const string &input_file_name: input_files)
-        FileReader::ReadInputFileAndUpdateGraph(input_file_name, graph, config);
-    TerminalCommand cmd;
-    while (true) {
-        cmd = terminal.GetNextTerminalCommand();
-        if (cmd.command_title == "EXIT")break;
-        // TODO: Add switch-case according to command_title: adir
-        terminal.ShowOutput("Hello");
-    }
-}
-
 void Simulation::ParseArgs(int argc, char **argv) {
     if (argc < 3) {
         cout << "Error on Simulation::parse_args. Reason: argc=" << argc << endl;
@@ -61,10 +80,7 @@ void Simulation::ParseArgs(int argc, char **argv) {
         else if (inside_char == 'c') config_file_name = current_arg;
         else if (inside_char == 'o') output_file_name = current_arg;
     }
-    cout << "input_files = " << endl;
-    for (const string &str: input_files) cout << str << " ";
-    cout << endl;
-    cout << "config_file = " << config_file_name << endl;
-    cout << "output_file = " << output_file_name << endl;
     if (input_files.empty()) throw runtime_error("Error on Simulation::parse_args: Not received any input_files");
 }
+
+

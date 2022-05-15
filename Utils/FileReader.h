@@ -7,12 +7,13 @@
 #include <iostream>
 #include "../Graph/Graph.h"
 #include "Config.h"
+#include "../TransportNetwork/TransportNetwork.h"
 
 using namespace std;
 
 class FileReader {
 public:
-    static void ReadInputFileAndUpdateGraph(const string&, Graph&, const Config&);
+    static void ReadInputFileAndUpdateNetwork(const string&, TransportNetwork&, const Config&);
     static Config ReadConfigFile(const string& config_file);
 };
 

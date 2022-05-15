@@ -30,11 +30,22 @@ TerminalCommand Terminal::GetNextTerminalCommand() {
     terminalCommand.command_title = commandWords[0];
     commandWords.pop_front();
     terminalCommand.args = commandWords;
+    if (terminalCommand.args.size() != command_args_num[terminalCommand.command_title]) {
+        throw runtime_error("Error on Terminal. Received wrong number of arguments for the command " +
+                            terminalCommand.command_title);
+    }
     return terminalCommand;
 }
 
 void Terminal::ShowOutput(const string &outputLine) {
-    cout << "[output]\t" << outputLine << endl;
+    cout << "[output] " << outputLine << endl;
+}
+
+void Terminal::ShowOutput(const string &outputTitle, const vector<string> &outputData, const string &msgIfEmpty) const {
+    cout << "[output] " << outputTitle << ": ";
+    if (outputData.empty()) cout << msgIfEmpty;
+    else for (const string &s: outputData) cout << s << ' ';
+    cout << endl;
 }
 
 

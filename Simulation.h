@@ -10,6 +10,7 @@
 #include "Utils/Config.h"
 #include "Graph/Graph.h"
 #include "Terminal/Terminal.h"
+#include "TransportNetwork/TransportNetwork.h"
 
 using namespace std;
 
@@ -19,10 +20,11 @@ private:
     vector<string> input_files;
     Config config;
     Terminal terminal;
-    Graph graph;
+    TransportNetwork transportNetwork{};
     void ParseArgs(int argc, char *argv[]);
 public:
-    void Start(int argc, char* argv[]);
+    Simulation(int argc, char* argv[]);
+    void Start();
 };
 
 

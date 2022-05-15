@@ -27,61 +27,63 @@ bool ValidateOneSpace(ifstream &file) {
 }
 
 array<string, 3> ReadLineFromInputFile(ifstream &input_file, const string &input_file_name) {
-    // TODO: Clear all printing
     string source, dest, line, extra_data;
     int duration;
     char c = 'c';
     getline(input_file, line);
-//    cout << "line = " << line << endl;
     if (line.empty()) throw runtime_error("found empty line in: " + input_file_name);
     stringstream ss(line);
     ss >> noskipws;
     ss >> source;
-//    cout << "s: " << source << endl;
     if (source.empty()) throw runtime_error("ReadLineFromInputFile: Missing information");
     ss >> c;
-    if (c != '\t') throw runtime_error("expected for '\\t' but found: '" + to_string(c) + "'");
+    if (c != '\t') throw runtime_error("expected for '\\t' but found: '" + to_string((char) c) + "'");
     ss >> dest;
-//    cout << "d: " << dest << endl;
     ss >> c;
-    if (c != '\t') throw runtime_error("expected for '\\t' but found: '" + to_string(c) + "'");
+    if (c != '\t') throw runtime_error("expected for '\\t' but found: '" + to_string((char) c) + "'");
     ss >> duration;
-//    cout << "duration: " << duration << endl;
     ss >> skipws >> extra_data;
     if (!extra_data.empty()) throw runtime_error("expected for '\\n' but found: '" + extra_data + "'");
+    if (source.size() > 32 || dest.size() > 32)
+        throw runtime_error(
+                "ReadLineFromInputFile: source_node or dest_node is more than 32 characters (in file: " +
+                input_file_name + ")");
+    if (contains(source, ' ') || contains(dest, ' '))
+        throw runtime_error("ReadLineFromInputFile: node can not contain ' '(in file: " + input_file_name + ")");
     return {source, dest, to_string(duration)};
+}
+
+string GetVehicleFromFileName(const string &file_name) {
+    if (file_name.find("bus") == 0) return "bus";
+    else if (file_name.find("tram") == 0) return "tram";
+    else if (file_name.find("sprinter") == 0) return "sprinter";
+    else if (file_name.find("rail") == 0) return "rail";
+    else
+        throw runtime_error(
+                "Error on GetVehicleFromFileName. File name " + file_name + " Not starts with vehicle name");
 }
 
 bool ValidateInputFileName(const string &file_name, const Config &config) {
     return any_of(config.GetVehicles().begin(), config.GetVehicles().end(),
-               [file_name](const string &vehicle) { return file_name.find(vehicle) == 0; });
+                  [file_name](const string &vehicle) { return file_name.find(vehicle) == 0; });
 }
 
-void FileReader::ReadInputFileAndUpdateGraph(const string &file_name, Graph &graph_to_update, const Config &config) {
-    if(!ValidateInputFileName(file_name, config)){
-        // TODO: ERROR
-        cout << "FileReader::ReadInputFileAndUpdateGraph: Filename is invalid " << file_name << "." << endl;
-        exit(1);
-    }
+void FileReader::ReadInputFileAndUpdateNetwork(const string &file_name, TransportNetwork &transportNetwork,
+                                               const Config &config) {
+    if (!ValidateInputFileName(file_name, config))
+        throw runtime_error("FileReader::ReadInputFileAndUpdateGraph: Filename is invalid " + file_name);
+
     ifstream input_file(file_name);
-    if (!input_file) {
-        // TODO: ERROR
-        cout << "FileReader::ReadInputFileAndUpdateGraph: Failed to open " << file_name << "." << endl;
-        exit(1);
-    }
+    if (!input_file)
+        throw runtime_error("FileReader::ReadInputFileAndUpdateGraph: Failed to open " + file_name);
+
     input_file >> noskipws;
     array<string, 3> data;
+    Graph &graph = transportNetwork.GetGraphByVehicle(GetVehicleFromFileName(file_name));
     while (!input_file.eof()) {
-        try {
-            data = ReadLineFromInputFile(input_file, file_name);
-            // TODO: update graph
-        }
-        catch (runtime_error &e) {
-            // TODO: ERROR
-            cout << "ERROR on ReadLineFromInputFile. Reason: " << e.what() << endl;
-            exit(1);
-        }
-        if (data[0].empty()) break;
+        data = ReadLineFromInputFile(input_file, file_name);
+        // TODO: update graph
+        if (data[0].empty()) break; // EOF
     }
 }
 
