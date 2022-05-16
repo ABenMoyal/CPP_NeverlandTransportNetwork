@@ -13,16 +13,15 @@
 
 using namespace std;
 
-// TODO: implement Graph(by matrix) with upload & BFS & whatever needed: shani
 class Graph {
 private:
-    vector<vector<int> > transportGraph;
-    map<string, int> stationIXMap;
-    int stationIXCount;
+    vector<vector<int> > transportGraph;  // data
+    map<string, int> stationIXMap;  // StationName to Index in data
+    int stationIXCount;  // Station Index Counter
 public:
     Graph() {stationIXCount = 0;}
     void AddStationToTransportGraph();
-    void UpdateGraph(LoadCmdInput *input);
+    void UpdateGraph(LoadCmdInput& input);
     string GetStationNameByIX(int ix);
     vector<string> BFS(const string &source, bool transpose = false);
     bool ContainsNode(const string &nodeName);

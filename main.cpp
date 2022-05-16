@@ -6,6 +6,7 @@
 
 int main(int argc, char* argv[]) {
     Simulation simulation(argc, argv);
+    cout << "Starting.." << endl;
     simulation.Start();
     cout << "Program Finished" << endl;
     return 0;

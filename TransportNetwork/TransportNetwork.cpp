@@ -6,6 +6,7 @@
 #include <fstream>
 
 void TransportNetwork::InboundOutboundHelper(const string &nodeName, bool transpose, const Terminal &terminal) {
+    print("out.txt");
     if (!ContainsNode(nodeName))
         throw runtime_error(nodeName + " does not exist in the current network.\n");
     string msgIfEmpty = transpose ? "no inbound travel" : "no outbound travel";
@@ -48,9 +49,9 @@ void TransportNetwork::multiExpress(const string &sourceNode, const string &dest
 }
 
 void TransportNetwork::print(const string &outputFileName) {
-    // TODO: check after we have Graph: adir
     set<string>&& allNodes = GetAllNodes();
     ofstream outputFile(outputFileName);
+
     for(const string& nodeName: allNodes){
         vector<string>&& neighbours = busGraph.GetNeighboursNames(nodeName);
         outputFile << nodeName << ": ";
@@ -61,7 +62,9 @@ void TransportNetwork::print(const string &outputFileName) {
         for(const string& neighbour: neighbours) outputFile<<neighbour<<"(sprinter), ";
         neighbours = railGraph.GetNeighboursNames(nodeName);
         for(const string& neighbour: neighbours) outputFile<<neighbour<<"(rail), ";
+        outputFile << '\n';
     }
+    outputFile.close();
 }
 
 set<string> TransportNetwork::GetAllNodes() {

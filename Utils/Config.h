@@ -33,6 +33,7 @@ public:
     void SetOutputFileName(string& output_file_name);
     void SetVehicleStopTime(string& vehicle, int& stop_time);
     void SetStationTransitTime(string& station, int& transit_time);
+    const string& GetOutputFileName() { return output_file_name; }
     const array<string, 4>& GetVehicles() const { return vehicles;}
     const array<string, 3>& GetStationsTypes() const { return stations_types;}
     friend ostream& operator<<(ostream& os, Config& config){

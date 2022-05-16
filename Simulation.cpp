@@ -36,7 +36,8 @@ void Simulation::Start() {
         else if (cmd.command_title == "outbound") transportNetwork.outbound(cmd.args[0], terminal);
         else if (cmd.command_title == "uniExpress");
         else if (cmd.command_title == "multiExpress");
-        else if (cmd.command_title == "print");
+        else if (cmd.command_title == "print") transportNetwork.print(config.GetOutputFileName());
+
     }
 }
 
