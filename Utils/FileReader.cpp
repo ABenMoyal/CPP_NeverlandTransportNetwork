@@ -26,38 +26,36 @@ bool ValidateOneSpace(ifstream &file) {
     return true;
 }
 
-array<string, 3> ReadLineFromInputFile(ifstream &input_file, const string &input_file_name) {
-    string source, dest, line, extra_data;
-    int duration;
+void ReadLineFromInputFile(ifstream &input_file, const string &input_file_name, LoadCmdInput *loadCmdInput) {
+    string line, extra_data;
     char c = 'c';
     getline(input_file, line);
     if (line.empty()) throw runtime_error("found empty line in: " + input_file_name);
     stringstream ss(line);
     ss >> noskipws;
-    ss >> source;
-    if (source.empty()) throw runtime_error("ReadLineFromInputFile: Missing information");
+    ss >> loadCmdInput->src;
+    if (loadCmdInput->src.empty()) throw runtime_error("ReadLineFromInputFile: Missing information");
     ss >> c;
     if (c != '\t') throw runtime_error("expected for '\\t' but found: '" + to_string((char) c) + "'");
-    ss >> dest;
+    ss >> loadCmdInput->dest;
     ss >> c;
     if (c != '\t') throw runtime_error("expected for '\\t' but found: '" + to_string((char) c) + "'");
-    ss >> duration;
+    ss >> loadCmdInput->duration;
     ss >> skipws >> extra_data;
     if (!extra_data.empty()) throw runtime_error("expected for '\\n' but found: '" + extra_data + "'");
-    if (source.size() > 32 || dest.size() > 32)
+    if (loadCmdInput->src.size() > 32 || loadCmdInput->dest.size() > 32)
         throw runtime_error(
                 "ReadLineFromInputFile: source_node or dest_node is more than 32 characters (in file: " +
                 input_file_name + ")");
-    if (contains(source, ' ') || contains(dest, ' '))
+    if (contains(loadCmdInput->src, ' ') || contains(loadCmdInput->dest, ' '))
         throw runtime_error("ReadLineFromInputFile: node can not contain ' '(in file: " + input_file_name + ")");
-    return {source, dest, to_string(duration)};
 }
 
-string GetVehicleFromFileName(const string &file_name) {
-    if (file_name.find("bus") == 0) return "bus";
-    else if (file_name.find("tram") == 0) return "tram";
-    else if (file_name.find("sprinter") == 0) return "sprinter";
-    else if (file_name.find("rail") == 0) return "rail";
+VehicleName GetVehicleFromFileName(const string &file_name) {
+    if (file_name.find("bus") == 0) return BUS;
+    else if (file_name.find("tram") == 0) return TRAM;
+    else if (file_name.find("sprinter") == 0) return SPRINTER;
+    else if (file_name.find("rail") == 0) return RAIL;
     else
         throw runtime_error(
                 "Error on GetVehicleFromFileName. File name " + file_name + " Not starts with vehicle name");
@@ -78,12 +76,12 @@ void FileReader::ReadInputFileAndUpdateNetwork(const string &file_name, Transpor
         throw runtime_error("FileReader::ReadInputFileAndUpdateGraph: Failed to open " + file_name);
 
     input_file >> noskipws;
-    array<string, 3> data;
+    LoadCmdInput *data;
     Graph &graph = transportNetwork.GetGraphByVehicle(GetVehicleFromFileName(file_name));
     while (!input_file.eof()) {
-        data = ReadLineFromInputFile(input_file, file_name);
+        ReadLineFromInputFile(input_file, file_name, data);
         // TODO: update graph
-        if (data[0].empty()) break; // EOF
+        if (data->src.empty()) break; // EOF
     }
 }
 

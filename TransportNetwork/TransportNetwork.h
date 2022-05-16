@@ -10,6 +10,7 @@
 #include "../Terminal/Terminal.h"
 #include <set>
 
+typedef enum {BUS, TRAM, SPRINTER, RAIL} VehicleName;
 class TransportNetwork {
 private:
     Graph busGraph;
@@ -25,7 +26,7 @@ public:
     void print(const string& outputFileName);
     set<string> GetAllNodes();
     bool ContainsNode(const string& nodeName);
-    Graph& GetGraphByVehicle(const string& vehicleName);
+    Graph& GetGraphByVehicle(VehicleName vehicleName);
 };
 
 

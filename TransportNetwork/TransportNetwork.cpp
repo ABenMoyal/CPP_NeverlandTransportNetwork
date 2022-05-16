@@ -28,13 +28,15 @@ bool TransportNetwork::ContainsNode(const string &nodeName) {
             sprinterGraph.ContainsNode(nodeName) || railGraph.ContainsNode(nodeName));
 }
 
-Graph &TransportNetwork::GetGraphByVehicle(const string &vehicleName) {
-    if (vehicleName == "bus") return busGraph;
-    else if (vehicleName == "tram") return tramGraph;
-    else if (vehicleName == "sprinter") return sprinterGraph;
-    else if (vehicleName == "rail") return railGraph;
-    else
-        throw runtime_error("Error on TransportNetwork::GetGraphByVehicle: unknown vehicle name (" + vehicleName + ")");
+Graph &TransportNetwork::GetGraphByVehicle(VehicleName vehicleName) {
+    switch (vehicleName) {
+        case BUS: return busGraph;
+        case TRAM: return tramGraph;
+        case SPRINTER: return sprinterGraph;
+        case RAIL: return railGraph;
+        default:
+            throw runtime_error("Error on TransportNetwork::GetGraphByVehicle: unknown vehicle name (" + to_string(int(vehicleName)) + ")");
+    }
 }
 
 void TransportNetwork::uniExpress(const string &sourceNode, const string &destNode, const Terminal &terminal) {
