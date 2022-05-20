@@ -37,7 +37,7 @@ void Graph::UpdateGraph(Edge &input) {
     }
 }
 
-string Graph::GetStationNameByIX(int ix) const{
+string Graph::GetStationNameByIX(int ix) const {
     for (auto &station: stationIXMap) {
         if (station.second == ix) return station.first;
     }
@@ -86,7 +86,7 @@ bool Graph::ContainsNode(const string &nodeName) const {
     return stationIXMap.count(nodeName);
 }
 
-vector<string> Graph::GetNeighboursNames(const string &nodeName) const{
+vector<string> Graph::GetNeighboursNames(const string &nodeName) const {
     vector<string> names;
     if (!ContainsNode(nodeName)) return {};
     for (int i = 0; i < stationIXCount; i++) {
@@ -96,7 +96,7 @@ vector<string> Graph::GetNeighboursNames(const string &nodeName) const{
     return names;
 }
 
-vector<string> Graph::GetNodesNames() const{
+vector<string> Graph::GetNodesNames() const {
     vector<string> stations;
     for (auto &station: stationIXMap) {
         stations.push_back(station.first);
@@ -104,7 +104,7 @@ vector<string> Graph::GetNodesNames() const{
     return stations;
 }
 
-map<string, double> Graph::Dijkstra(const string &sourceNode) const{
+map<string, double> Graph::Dijkstra(const string &sourceNode, const int &stopTime) const {
     if (!ContainsNode(sourceNode)) throw runtime_error("route unavailable");
 
     // Initialize dv_vector & minHeap
@@ -118,7 +118,7 @@ map<string, double> Graph::Dijkstra(const string &sourceNode) const{
     }
 
     DijkstraNode *current;
-    int current_index, neighbour_index, edge_weight;
+    int currentIndex, neighbourIndex, edgeWeight;
     while (!vectorHeap.empty()) {
         // EXTRACT-MIN
         sort(vectorHeap.begin(), vectorHeap.end(), [](DijkstraNode *a, DijkstraNode *b) { return a->d > b->d; });
@@ -126,12 +126,14 @@ map<string, double> Graph::Dijkstra(const string &sourceNode) const{
         vectorHeap.pop_back();
 
         // UPDATE NEIGHBOURS
-        current_index = stationIXMap.at(current->name);
+        currentIndex = stationIXMap.at(current->name);
         for (const string &neighbour: GetNeighboursNames(current->name)) {
-            neighbour_index = stationIXMap.at(neighbour);
-            edge_weight = transportGraph.at(current_index).at(neighbour_index);
-            if (nodes[neighbour]->d > nodes[current->name]->d + edge_weight) {
-                nodes[neighbour]->d = nodes[current->name]->d + edge_weight;
+            neighbourIndex = stationIXMap.at(neighbour);
+            edgeWeight = transportGraph.at(currentIndex).at(neighbourIndex);
+            int stopTimeAddition = current->name == sourceNode ? 0 : stopTime;
+
+            if (nodes[neighbour]->d > nodes[current->name]->d + edgeWeight + stopTimeAddition) {
+                nodes[neighbour]->d = nodes[current->name]->d + edgeWeight + stopTimeAddition;
             }
 
         }

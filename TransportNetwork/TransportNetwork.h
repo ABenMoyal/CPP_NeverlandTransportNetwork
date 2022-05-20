@@ -8,6 +8,7 @@
 
 #include "../Graph/Graph.h"
 #include "../Terminal/Terminal.h"
+#include "../Utils/Config.h"
 #include <set>
 
 typedef enum {BUS, TRAM, SPRINTER, RAIL} VehicleName;
@@ -21,7 +22,7 @@ private:
 public:
     void inbound(const string& sourceNode);
     void outbound(const string& destNode);
-    void uniExpress(const string& sourceNode, const string& destNode);
+    void uniExpress(const string& sourceNode, const string& destNode, const Config& config);
     void multiExpress(const string& sourceNode, const string& destNode);
     void print(const string& outputFileName);
     set<string> GetAllNodes();

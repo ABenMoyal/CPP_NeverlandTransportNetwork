@@ -27,7 +27,7 @@ public:
     bool ContainsNode(const string &nodeName) const;
     vector<string> GetNeighboursNames(const string& nodeName) const;
     vector<string> GetNodesNames() const;
-    map<string, double> Dijkstra(const string& sourceNode) const;
+    map<string, double> Dijkstra(const string& sourceNode, const int& stopTime) const;
 };
 
 

@@ -45,9 +45,9 @@ Graph &TransportNetwork::GetGraphByVehicle(VehicleName vehicleName) {
     }
 }
 
-void uniExpressHelper(const string &vehicleName, const Graph &g, const string &sourceNode, const string &destNode) {
+void uniExpressHelper(const string &vehicleName, const Graph &g, const string &sourceNode, const string &destNode, const int& stop_time) {
     try {
-        map<string, double> &&dv_vector = g.Dijkstra(sourceNode);
+        map<string, double> &&dv_vector = g.Dijkstra(sourceNode, stop_time);
         Terminal::ShowOutput(vehicleName, dv_vector[destNode], "route unavailable");
     }
     catch (const exception &e) {
@@ -55,7 +55,7 @@ void uniExpressHelper(const string &vehicleName, const Graph &g, const string &s
     }
 }
 
-void TransportNetwork::uniExpress(const string &sourceNode, const string &destNode) {
+void TransportNetwork::uniExpress(const string &sourceNode, const string &destNode, const Config& config) {
     if (!ContainsNode(sourceNode)) {
         cout << sourceNode << " does not exist in the current network.\n";
         return;
@@ -63,10 +63,10 @@ void TransportNetwork::uniExpress(const string &sourceNode, const string &destNo
         cout << destNode << " does not exist in the current network.\n";
         return;
     }
-    uniExpressHelper("bus", busGraph, sourceNode, destNode);
-    uniExpressHelper("tram", tramGraph, sourceNode, destNode);
-    uniExpressHelper("sprinter", sprinterGraph, sourceNode, destNode);
-    uniExpressHelper("rail", railGraph, sourceNode, destNode);
+    uniExpressHelper("bus", busGraph, sourceNode, destNode, config.GetStopTimeByVehicle("bus"));
+    uniExpressHelper("tram", tramGraph, sourceNode, destNode, config.GetStopTimeByVehicle("tram"));
+    uniExpressHelper("sprinter", sprinterGraph, sourceNode, destNode, config.GetStopTimeByVehicle("sprinter"));
+    uniExpressHelper("rail", railGraph, sourceNode, destNode, config.GetStopTimeByVehicle("rail"));
 }
 
 void TransportNetwork::multiExpress(const string &sourceNode, const string &destNode) {
