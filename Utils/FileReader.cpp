@@ -26,28 +26,28 @@ bool ValidateOneSpace(ifstream &file) {
     return true;
 }
 
-void ReadLineFromInputFile(ifstream &input_file, const string &input_file_name, LoadCmdInput& loadCmdInput) {
+void ReadLineFromInputFile(ifstream &input_file, const string &input_file_name, Edge& edge) {
     string line, extra_data;
     char c = 'c';
     getline(input_file, line);
     if (line.empty()) throw runtime_error("found empty line in: " + input_file_name);
     stringstream ss(line);
     ss >> noskipws;
-    ss >> loadCmdInput.src;
-    if (loadCmdInput.src.empty()) throw runtime_error("ReadLineFromInputFile: Missing information");
+    ss >> edge.src;
+    if (edge.src.empty()) throw runtime_error("ReadLineFromInputFile: Missing information");
     ss >> c;
     if (c != '\t') throw runtime_error("expected for '\\t' but found: '" + to_string((char) c) + "'");
-    ss >> loadCmdInput.dest;
+    ss >> edge.dest;
     ss >> c;
     if (c != '\t') throw runtime_error("expected for '\\t' but found: '" + to_string((char) c) + "'");
-    ss >> loadCmdInput.duration;
+    ss >> edge.duration;
     ss >> skipws >> extra_data;
     if (!extra_data.empty()) throw runtime_error("expected for '\\n' but found: '" + extra_data + "'");
-    if (loadCmdInput.src.size() > 32 || loadCmdInput.dest.size() > 32)
+    if (edge.src.size() > 32 || edge.dest.size() > 32)
         throw runtime_error(
                 "ReadLineFromInputFile: source_node or dest_node is more than 32 characters (in file: " +
                 input_file_name + ")");
-    if (contains(loadCmdInput.src, ' ') || contains(loadCmdInput.dest, ' '))
+    if (contains(edge.src, ' ') || contains(edge.dest, ' '))
         throw runtime_error("ReadLineFromInputFile: node can not contain ' '(in file: " + input_file_name + ")");
 }
 
@@ -76,7 +76,7 @@ void FileReader::ReadInputFileAndUpdateNetwork(const string &file_name, Transpor
         throw runtime_error("Failed to open " + file_name);
 
     input_file >> noskipws;
-    LoadCmdInput data;
+    Edge data;
     Graph &graph = transportNetwork.GetGraphByVehicle(GetVehicleFromFileName(file_name));
     while (!input_file.eof()) {
         ReadLineFromInputFile(input_file, file_name, data);

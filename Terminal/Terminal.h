@@ -21,8 +21,9 @@ private:
     };
 public:
     TerminalCommand GetNextTerminalCommand();
-    void ShowOutput(const string& outputLine);
-    void ShowOutput(const string &outputTitle, const vector<string> &outputData, const string &msgIfEmpty) const;
+    static void ShowOutput(const string& outputLine);
+    static void ShowOutput(const string &outputTitle, const vector<string> &outputData, const string &msgIfEmpty);
+    static void ShowOutput(const string &outputTitle, const double& outputData, const string &msgIfEmpty);
 };
 
 #endif //HW2_TERMINAL_H

@@ -30,12 +30,12 @@ void Simulation::Start() {
                 FileReader::ReadInputFileAndUpdateNetwork(cmd.args[0], transportNetwork, config);
             }
             catch (exception &e) {
-                terminal.ShowOutput(e.what());
+                Terminal::ShowOutput("ERROR opening the specified file.");
             }
-        } else if (cmd.command_title == "inbound") transportNetwork.inbound(cmd.args[0], terminal);
-        else if (cmd.command_title == "outbound") transportNetwork.outbound(cmd.args[0], terminal);
-        else if (cmd.command_title == "uniExpress");
-        else if (cmd.command_title == "multiExpress");
+        } else if (cmd.command_title == "inbound") transportNetwork.inbound(cmd.args[0]);
+        else if (cmd.command_title == "outbound") transportNetwork.outbound(cmd.args[0]);
+        else if (cmd.command_title == "uniExpress") transportNetwork.uniExpress(cmd.args[0], cmd.args[1]);
+        else if (cmd.command_title == "multiExpress") transportNetwork.multiExpress(cmd.args[0], cmd.args[1]);
         else if (cmd.command_title == "print") transportNetwork.print(config.GetOutputFileName());
 
     }

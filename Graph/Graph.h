@@ -21,12 +21,13 @@ private:
 public:
     Graph() {stationIXCount = 0;}
     void AddStationToTransportGraph();
-    void UpdateGraph(LoadCmdInput& input);
-    string GetStationNameByIX(int ix);
+    void UpdateGraph(Edge& input);
+    string GetStationNameByIX(int ix) const;
     vector<string> BFS(const string &source, bool transpose = false);
-    bool ContainsNode(const string &nodeName);
-    vector<string> GetNeighboursNames(const string& nodeName);
-    vector<string> GetNodesNames();
+    bool ContainsNode(const string &nodeName) const;
+    vector<string> GetNeighboursNames(const string& nodeName) const;
+    vector<string> GetNodesNames() const;
+    map<string, double> Dijkstra(const string& sourceNode) const;
 };
 
 

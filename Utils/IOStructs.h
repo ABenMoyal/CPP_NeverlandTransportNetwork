@@ -11,7 +11,8 @@ typedef struct loadData{
     string src;
     string dest;
     int duration;
-} LoadCmdInput;
+} Edge;
+
 
 
 #endif //HW2_IOSTRUCTS_H

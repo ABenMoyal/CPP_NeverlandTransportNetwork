@@ -17,12 +17,12 @@ private:
     Graph tramGraph;
     Graph sprinterGraph;
     Graph railGraph;
-    void InboundOutboundHelper(const string& nodeName, bool transpose, const Terminal& terminal);
+    void InboundOutboundHelper(const string& nodeName, bool transpose);
 public:
-    void inbound(const string& sourceNode, const Terminal& terminal);
-    void outbound(const string& destNode, const Terminal& terminal);
-    void uniExpress(const string& sourceNode, const string& destNode, const Terminal& terminal);
-    void multiExpress(const string& sourceNode, const string& destNode, const Terminal& terminal);
+    void inbound(const string& sourceNode);
+    void outbound(const string& destNode);
+    void uniExpress(const string& sourceNode, const string& destNode);
+    void multiExpress(const string& sourceNode, const string& destNode);
     void print(const string& outputFileName);
     set<string> GetAllNodes();
     bool ContainsNode(const string& nodeName);

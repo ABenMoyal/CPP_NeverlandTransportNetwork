@@ -2,8 +2,13 @@
 // Created by adirr on 04/05/2022.
 //
 
+#include <set>
 #include "Graph.h"
 #include "list"
+#include "GraphStructs.h"
+#include <queue>
+
+double INFINITY = std::numeric_limits<double>::infinity();
 
 void Graph::AddStationToTransportGraph() {
     int stIX;
@@ -22,7 +27,7 @@ void Graph::AddStationToTransportGraph() {
     }\
 }
 
-void Graph::UpdateGraph(LoadCmdInput &input) {
+void Graph::UpdateGraph(Edge &input) {
     ADD_NEW_STATION_TO_GRAPH_IF_NEEDED(input.src);
     ADD_NEW_STATION_TO_GRAPH_IF_NEEDED(input.dest);
     int srcIx = stationIXMap[input.src];
@@ -32,7 +37,7 @@ void Graph::UpdateGraph(LoadCmdInput &input) {
     }
 }
 
-string Graph::GetStationNameByIX(int ix) {
+string Graph::GetStationNameByIX(int ix) const{
     for (auto &station: stationIXMap) {
         if (station.second == ix) return station.first;
     }
@@ -54,7 +59,7 @@ string Graph::GetStationNameByIX(int ix) {
 vector<string> Graph::BFS(const string &source, bool transpose) {
     vector<string> reachables;
     list<int> queue;
-    if(!ContainsNode(source)) return {};
+    if (!ContainsNode(source)) return {};
     int srcIx = stationIXMap[source];
 
     queue.push_back(srcIx);
@@ -77,24 +82,65 @@ vector<string> Graph::BFS(const string &source, bool transpose) {
     return reachables;
 }
 
-bool Graph::ContainsNode(const string &nodeName) {
+bool Graph::ContainsNode(const string &nodeName) const {
     return stationIXMap.count(nodeName);
 }
 
-vector<string> Graph::GetNeighboursNames(const string &nodeName) {
+vector<string> Graph::GetNeighboursNames(const string &nodeName) const{
     vector<string> names;
     if (!ContainsNode(nodeName)) return {};
-    for (int i=0; i< stationIXCount; i++) {
-        if (transportGraph.at(stationIXMap[nodeName]).at(i) != -1)
+    for (int i = 0; i < stationIXCount; i++) {
+        if (transportGraph.at(stationIXMap.at(nodeName)).at(i) != -1)
             names.push_back(GetStationNameByIX(i));
     }
     return names;
 }
 
-vector<string> Graph::GetNodesNames() {
+vector<string> Graph::GetNodesNames() const{
     vector<string> stations;
     for (auto &station: stationIXMap) {
         stations.push_back(station.first);
     }
     return stations;
+}
+
+map<string, double> Graph::Dijkstra(const string &sourceNode) const{
+    if (!ContainsNode(sourceNode)) throw runtime_error("route unavailable");
+
+    // Initialize dv_vector & minHeap
+    map<string, DijkstraNode *> nodes;
+    vector<DijkstraNode *> vectorHeap;
+    DijkstraNode *node;
+    for (const string &nodeName: GetNodesNames()) {
+        node = new DijkstraNode(nodeName, nodeName == sourceNode ? 0 : INFINITY);
+        vectorHeap.push_back(node);
+        nodes[nodeName] = node;
+    }
+
+    DijkstraNode *current;
+    int current_index, neighbour_index, edge_weight;
+    while (!vectorHeap.empty()) {
+        // EXTRACT-MIN
+        sort(vectorHeap.begin(), vectorHeap.end(), [](DijkstraNode *a, DijkstraNode *b) { return a->d > b->d; });
+        current = vectorHeap[vectorHeap.size() - 1];
+        vectorHeap.pop_back();
+
+        // UPDATE NEIGHBOURS
+        current_index = stationIXMap.at(current->name);
+        for (const string &neighbour: GetNeighboursNames(current->name)) {
+            neighbour_index = stationIXMap.at(neighbour);
+            edge_weight = transportGraph.at(current_index).at(neighbour_index);
+            if (nodes[neighbour]->d > nodes[current->name]->d + edge_weight) {
+                nodes[neighbour]->d = nodes[current->name]->d + edge_weight;
+            }
+
+        }
+    }
+
+    map<string, double> dv_vector;
+    for (const auto &nameToNodePair: nodes) {
+        dv_vector.insert({nameToNodePair.first, nameToNodePair.second->d});
+        delete nameToNodePair.second;
+    }
+    return dv_vector;
 }

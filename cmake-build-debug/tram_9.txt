@@ -1,4 +1,9 @@
 CSPiccaninnyMain	PiccaninnyPlains	10
 PiccaninnyPlains	CSPiccaninnyMain	9
-TelAviv	Netanya	9
+TelAviv	Netanya	5
 TelAviv	Jerusalem	9
+Netanya	Jerusalem	3
+TelAviv	RamatGan	2
+RamatGan	Modiin	2
+Modiin	Jerusalem	2
+RamatGan	Netanya	2

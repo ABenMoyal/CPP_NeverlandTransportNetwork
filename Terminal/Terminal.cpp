@@ -37,14 +37,21 @@ TerminalCommand Terminal::GetNextTerminalCommand() {
     return terminalCommand;
 }
 
-void Terminal::ShowOutput(const string &outputLine) {
+void Terminal::ShowOutput(const string &outputLine){
     cout << "[output] " << outputLine << endl;
 }
 
-void Terminal::ShowOutput(const string &outputTitle, const vector<string> &outputData, const string &msgIfEmpty) const {
+void Terminal::ShowOutput(const string &outputTitle, const vector<string> &outputData, const string &msgIfEmpty) {
     cout << "[output] " << outputTitle << ": ";
     if (outputData.empty()) cout << msgIfEmpty;
     else for (const string &s: outputData) cout << s << ' ';
+    cout << endl;
+}
+
+void Terminal::ShowOutput(const string &outputTitle, const double& outputData, const string &msgIfEmpty) {
+    cout << "[output] " << outputTitle << ": ";
+    if (outputData == -1) cout << msgIfEmpty;
+    else cout << (int)outputData;
     cout << endl;
 }
 

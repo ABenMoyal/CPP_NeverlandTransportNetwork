@@ -5,23 +5,23 @@
 #include "TransportNetwork.h"
 #include <fstream>
 
-void TransportNetwork::InboundOutboundHelper(const string &nodeName, bool transpose, const Terminal &terminal) {
+void TransportNetwork::InboundOutboundHelper(const string &nodeName, bool transpose) {
     print("out.txt");
     if (!ContainsNode(nodeName))
         throw runtime_error(nodeName + " does not exist in the current network.\n");
     string msgIfEmpty = transpose ? "no inbound travel" : "no outbound travel";
-    terminal.ShowOutput("bus", busGraph.BFS(nodeName, transpose), msgIfEmpty);
-    terminal.ShowOutput("tram", tramGraph.BFS(nodeName, transpose), msgIfEmpty);
-    terminal.ShowOutput("sprinter", sprinterGraph.BFS(nodeName, transpose), msgIfEmpty);
-    terminal.ShowOutput("rail", railGraph.BFS(nodeName, transpose), msgIfEmpty);
+    Terminal::ShowOutput("bus", busGraph.BFS(nodeName, transpose), msgIfEmpty);
+    Terminal::ShowOutput("tram", tramGraph.BFS(nodeName, transpose), msgIfEmpty);
+    Terminal::ShowOutput("sprinter", sprinterGraph.BFS(nodeName, transpose), msgIfEmpty);
+    Terminal::ShowOutput("rail", railGraph.BFS(nodeName, transpose), msgIfEmpty);
 }
 
-void TransportNetwork::inbound(const string &sourceNode, const Terminal &terminal) {
-    InboundOutboundHelper(sourceNode, false, terminal);
+void TransportNetwork::inbound(const string &sourceNode) {
+    InboundOutboundHelper(sourceNode, false);
 }
 
-void TransportNetwork::outbound(const string &destNode, const Terminal &terminal) {
-    InboundOutboundHelper(destNode, true, terminal);
+void TransportNetwork::outbound(const string &destNode) {
+    InboundOutboundHelper(destNode, true);
 }
 
 bool TransportNetwork::ContainsNode(const string &nodeName) {
@@ -31,37 +31,62 @@ bool TransportNetwork::ContainsNode(const string &nodeName) {
 
 Graph &TransportNetwork::GetGraphByVehicle(VehicleName vehicleName) {
     switch (vehicleName) {
-        case BUS: return busGraph;
-        case TRAM: return tramGraph;
-        case SPRINTER: return sprinterGraph;
-        case RAIL: return railGraph;
+        case BUS:
+            return busGraph;
+        case TRAM:
+            return tramGraph;
+        case SPRINTER:
+            return sprinterGraph;
+        case RAIL:
+            return railGraph;
         default:
-            throw runtime_error("Error on TransportNetwork::GetGraphByVehicle: unknown vehicle name (" + to_string(int(vehicleName)) + ")");
+            throw runtime_error("Error on TransportNetwork::GetGraphByVehicle: unknown vehicle name (" +
+                                to_string(int(vehicleName)) + ")");
     }
 }
 
-void TransportNetwork::uniExpress(const string &sourceNode, const string &destNode, const Terminal &terminal) {
-    // TODO: after we have Diakstra
+void uniExpressHelper(const string &vehicleName, const Graph &g, const string &sourceNode, const string &destNode) {
+    try {
+        map<string, double> &&dv_vector = g.Dijkstra(sourceNode);
+        Terminal::ShowOutput(vehicleName, dv_vector[destNode], "route unavailable");
+    }
+    catch (const exception &e) {
+        Terminal::ShowOutput(vehicleName + ": " + (string) e.what());
+    }
 }
 
-void TransportNetwork::multiExpress(const string &sourceNode, const string &destNode, const Terminal &terminal) {
+void TransportNetwork::uniExpress(const string &sourceNode, const string &destNode) {
+    if (!ContainsNode(sourceNode)) {
+        cout << sourceNode << " does not exist in the current network.\n";
+        return;
+    } else if (!ContainsNode(destNode)) {
+        cout << destNode << " does not exist in the current network.\n";
+        return;
+    }
+    uniExpressHelper("bus", busGraph, sourceNode, destNode);
+    uniExpressHelper("tram", tramGraph, sourceNode, destNode);
+    uniExpressHelper("sprinter", sprinterGraph, sourceNode, destNode);
+    uniExpressHelper("rail", railGraph, sourceNode, destNode);
+}
+
+void TransportNetwork::multiExpress(const string &sourceNode, const string &destNode) {
     // TODO: after we have Diakstra
 }
 
 void TransportNetwork::print(const string &outputFileName) {
-    set<string>&& allNodes = GetAllNodes();
+    set<string> &&allNodes = GetAllNodes();
     ofstream outputFile(outputFileName);
 
-    for(const string& nodeName: allNodes){
-        vector<string>&& neighbours = busGraph.GetNeighboursNames(nodeName);
+    for (const string &nodeName: allNodes) {
+        vector<string> &&neighbours = busGraph.GetNeighboursNames(nodeName);
         outputFile << nodeName << ": ";
-        for(const string& neighbour: neighbours) outputFile<<neighbour<<"(bus), ";
+        for (const string &neighbour: neighbours) outputFile << neighbour << "(bus), ";
         neighbours = tramGraph.GetNeighboursNames(nodeName);
-        for(const string& neighbour: neighbours) outputFile<<neighbour<<"(tram), ";
+        for (const string &neighbour: neighbours) outputFile << neighbour << "(tram), ";
         neighbours = sprinterGraph.GetNeighboursNames(nodeName);
-        for(const string& neighbour: neighbours) outputFile<<neighbour<<"(sprinter), ";
+        for (const string &neighbour: neighbours) outputFile << neighbour << "(sprinter), ";
         neighbours = railGraph.GetNeighboursNames(nodeName);
-        for(const string& neighbour: neighbours) outputFile<<neighbour<<"(rail), ";
+        for (const string &neighbour: neighbours) outputFile << neighbour << "(rail), ";
         outputFile << '\n';
     }
     outputFile.close();
@@ -69,9 +94,9 @@ void TransportNetwork::print(const string &outputFileName) {
 
 set<string> TransportNetwork::GetAllNodes() {
     set<string> allNodes;
-    for(const string& nodeName: busGraph.GetNodesNames()) allNodes.insert(nodeName);
-    for(const string& nodeName: tramGraph.GetNodesNames()) allNodes.insert(nodeName);
-    for(const string& nodeName: sprinterGraph.GetNodesNames()) allNodes.insert(nodeName);
-    for(const string& nodeName: railGraph.GetNodesNames()) allNodes.insert(nodeName);
+    for (const string &nodeName: busGraph.GetNodesNames()) allNodes.insert(nodeName);
+    for (const string &nodeName: tramGraph.GetNodesNames()) allNodes.insert(nodeName);
+    for (const string &nodeName: sprinterGraph.GetNodesNames()) allNodes.insert(nodeName);
+    for (const string &nodeName: railGraph.GetNodesNames()) allNodes.insert(nodeName);
     return allNodes;
 }
