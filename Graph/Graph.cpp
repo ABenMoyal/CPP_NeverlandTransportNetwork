@@ -130,12 +130,14 @@ map<string, double> Graph::Dijkstra(const string &sourceNode, const int &stopTim
         for (const string &neighbour: GetNeighboursNames(current->name)) {
             neighbourIndex = stationIXMap.at(neighbour);
             edgeWeight = transportGraph.at(currentIndex).at(neighbourIndex);
+            // TODO: change StopTimeAddition to be according destNode: adir
+            // TODO: ability to check isTransitEdge(source, neighbour): adir
+            // TODO: if we are in mergedGraph and moving on transitEdge stopTime=0: adir
             int stopTimeAddition = current->name == sourceNode ? 0 : stopTime;
 
             if (nodes[neighbour]->d > nodes[current->name]->d + edgeWeight + stopTimeAddition) {
                 nodes[neighbour]->d = nodes[current->name]->d + edgeWeight + stopTimeAddition;
             }
-
         }
     }
 
@@ -146,3 +148,6 @@ map<string, double> Graph::Dijkstra(const string &sourceNode, const int &stopTim
     }
     return dv_vector;
 }
+
+
+// if SameStation() && GetVehicleFromStationName(source) != GetVehicleFromStationName(neighbour);

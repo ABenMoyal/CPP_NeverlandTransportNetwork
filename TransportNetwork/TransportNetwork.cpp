@@ -70,7 +70,15 @@ void TransportNetwork::uniExpress(const string &sourceNode, const string &destNo
 }
 
 void TransportNetwork::multiExpress(const string &sourceNode, const string &destNode) {
-    // TODO: after we have Diakstra
+    // TODO: build MergedGraph(with 0 edges from source to source_bus, source_tram...): shani
+        // TODO: Graph mergedGraph;
+        // TODO: Graph currentGraph;
+        // TODO: for(node: currentGraph.GetAllNodes())
+        // TODO:    neighbours=currentGraph.GetNeighbours(node);
+        // TODO:    Update(mergedGraph, node, neighbours, "bus");
+        // TODO:
+        // TODO:
+    // TODO: call Dijkstra on MergedGraph for each sourceNode : adir
 }
 
 void TransportNetwork::print(const string &outputFileName) {
