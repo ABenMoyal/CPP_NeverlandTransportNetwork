@@ -6,6 +6,7 @@
 #include "Graph.h"
 #include "list"
 #include "GraphStructs.h"
+#include "../Utils/Config.h"
 #include <queue>
 
 double INFINITY = std::numeric_limits<double>::infinity();
@@ -104,7 +105,19 @@ vector<string> Graph::GetNodesNames() const {
     return stations;
 }
 
-map<string, double> Graph::Dijkstra(const string &sourceNode, const int &stopTime) const {
+bool IsSameStation(const string &node1, const string &node2) {
+    string stationName1 = node1.substr(0, node1.rfind('_'));
+    string stationName2 = node2.substr(0, node2.rfind('_'));
+    return stationName1 == stationName2;
+}
+
+int GetStopTime(const string &current, const string &neighbour, const string &destNode, const Graph& graph,
+                const Config &config) {
+    if (graph.IsMergedGraph() && IsSameStation(current, neighbour)) return config.GetTransitTimeByStationName(current);
+    return neighbour==destNode? 0: config.GetStopTimeByVehicle(graph.GetVehicleName());
+}
+
+map<string, double> Graph::Dijkstra(const string &sourceNode, const string &destNode, const Config& config) const {
     if (!ContainsNode(sourceNode)) throw runtime_error("route unavailable");
 
     // Initialize dv_vector & minHeap
@@ -130,13 +143,9 @@ map<string, double> Graph::Dijkstra(const string &sourceNode, const int &stopTim
         for (const string &neighbour: GetNeighboursNames(current->name)) {
             neighbourIndex = stationIXMap.at(neighbour);
             edgeWeight = transportGraph.at(currentIndex).at(neighbourIndex);
-            // TODO: change StopTimeAddition to be according destNode: adir
-            // TODO: ability to check isTransitEdge(source, neighbour): adir
-            // TODO: if we are in mergedGraph and moving on transitEdge stopTime=0: adir
-            int stopTimeAddition = current->name == sourceNode ? 0 : stopTime;
-
-            if (nodes[neighbour]->d > nodes[current->name]->d + edgeWeight + stopTimeAddition) {
-                nodes[neighbour]->d = nodes[current->name]->d + edgeWeight + stopTimeAddition;
+            int extraWeight = GetStopTime(current->name, neighbour, destNode, *this, config);
+            if (nodes[neighbour]->d > nodes[current->name]->d + edgeWeight + extraWeight) {
+                nodes[neighbour]->d = nodes[current->name]->d + edgeWeight + extraWeight;
             }
         }
     }
@@ -146,6 +155,9 @@ map<string, double> Graph::Dijkstra(const string &sourceNode, const int &stopTim
         dv_vector.insert({nameToNodePair.first, nameToNodePair.second->d});
         delete nameToNodePair.second;
     }
+
+    // TODO: Delete after validation
+//    for(auto node: dv_vector) cout << node.first << ": " << node.second << endl;
     return dv_vector;
 }
 

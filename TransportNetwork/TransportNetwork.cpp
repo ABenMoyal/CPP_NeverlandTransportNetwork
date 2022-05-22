@@ -45,9 +45,10 @@ Graph &TransportNetwork::GetGraphByVehicle(VehicleName vehicleName) {
     }
 }
 
-void uniExpressHelper(const string &vehicleName, const Graph &g, const string &sourceNode, const string &destNode, const int& stop_time) {
+void uniExpressHelper(const string &vehicleName, const Graph &g, const string &sourceNode, const string &destNode,
+                      const Config &config) {
     try {
-        map<string, double> &&dv_vector = g.Dijkstra(sourceNode, stop_time);
+        map<string, double> &&dv_vector = g.Dijkstra(sourceNode, destNode, config);
         Terminal::ShowOutput(vehicleName, dv_vector[destNode], "route unavailable");
     }
     catch (const exception &e) {
@@ -55,7 +56,7 @@ void uniExpressHelper(const string &vehicleName, const Graph &g, const string &s
     }
 }
 
-void TransportNetwork::uniExpress(const string &sourceNode, const string &destNode, const Config& config) {
+void TransportNetwork::uniExpress(const string &sourceNode, const string &destNode, const Config &config) {
     if (!ContainsNode(sourceNode)) {
         cout << sourceNode << " does not exist in the current network.\n";
         return;
@@ -63,21 +64,21 @@ void TransportNetwork::uniExpress(const string &sourceNode, const string &destNo
         cout << destNode << " does not exist in the current network.\n";
         return;
     }
-    uniExpressHelper("bus", busGraph, sourceNode, destNode, config.GetStopTimeByVehicle("bus"));
-    uniExpressHelper("tram", tramGraph, sourceNode, destNode, config.GetStopTimeByVehicle("tram"));
-    uniExpressHelper("sprinter", sprinterGraph, sourceNode, destNode, config.GetStopTimeByVehicle("sprinter"));
-    uniExpressHelper("rail", railGraph, sourceNode, destNode, config.GetStopTimeByVehicle("rail"));
+    uniExpressHelper("bus", busGraph, sourceNode, destNode, config);
+    uniExpressHelper("tram", tramGraph, sourceNode, destNode, config);
+    uniExpressHelper("sprinter", sprinterGraph, sourceNode, destNode, config);
+    uniExpressHelper("rail", railGraph, sourceNode, destNode, config);
 }
 
-void TransportNetwork::multiExpress(const string &sourceNode, const string &destNode) {
+void TransportNetwork::multiExpress(const string &sourceNode, const string &destNode, const Config &config) {
     // TODO: build MergedGraph(with 0 edges from source to source_bus, source_tram...): shani
-        // TODO: Graph mergedGraph;
-        // TODO: Graph currentGraph;
-        // TODO: for(node: currentGraph.GetAllNodes())
-        // TODO:    neighbours=currentGraph.GetNeighbours(node);
-        // TODO:    Update(mergedGraph, node, neighbours, "bus");
-        // TODO:
-        // TODO:
+    // TODO: Graph mergedGraph;
+    // TODO: Graph currentGraph;
+    // TODO: for(node: currentGraph.GetAllNodes())
+    // TODO:    neighbours=currentGraph.GetNeighbours(node);
+    // TODO:    Update(mergedGraph, node, neighbours, "bus");
+    // TODO:
+    // TODO:
     // TODO: call Dijkstra on MergedGraph for each sourceNode : adir
 }
 

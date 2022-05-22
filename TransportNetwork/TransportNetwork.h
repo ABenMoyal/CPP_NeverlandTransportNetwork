@@ -11,19 +11,19 @@
 #include "../Utils/Config.h"
 #include <set>
 
-typedef enum {BUS, TRAM, SPRINTER, RAIL} VehicleName;
+
 class TransportNetwork {
 private:
-    Graph busGraph;
-    Graph tramGraph;
-    Graph sprinterGraph;
-    Graph railGraph;
+    Graph busGraph = {false, BUS};
+    Graph tramGraph = {false, TRAM};
+    Graph sprinterGraph = {false, SPRINTER};
+    Graph railGraph = {false, RAIL};
     void InboundOutboundHelper(const string& nodeName, bool transpose);
 public:
     void inbound(const string& sourceNode);
     void outbound(const string& destNode);
     void uniExpress(const string& sourceNode, const string& destNode, const Config& config);
-    void multiExpress(const string& sourceNode, const string& destNode);
+    void multiExpress(const string& sourceNode, const string& destNode, const Config& config);
     void print(const string& outputFileName);
     set<string> GetAllNodes();
     bool ContainsNode(const string& nodeName);

@@ -9,14 +9,15 @@
 #include <map>
 
 using namespace std;
+typedef enum {BUS, TRAM, SPRINTER, RAIL} VehicleName;
 
 class Config {
 private:
-    map<string, int> vehicle_to_stop_time = {
-            {"bus",      1},
-            {"tram",     2},
-            {"sprinter", 3},
-            {"rail",     5},
+    map<VehicleName, int> vehicle_to_stop_time = {
+            {BUS,      1},
+            {TRAM,     2},
+            {SPRINTER, 3},
+            {RAIL,     5},
     };
     map<string, int> station_to_transit_time = {
             {"intercity", 15},
@@ -31,32 +32,36 @@ public:
 
     Config(string &output_file_name);
 
-    Config(map<string, int> &vehicle_to_stop_time);
+    Config(map<VehicleName, int> &vehicle_to_stop_time);
 
-    Config(map<string, int> &vehicle_to_stop_time, string &output_file_name);
+    Config(map<VehicleName, int> &vehicle_to_stop_time, string &output_file_name);
 
     void SetOutputFileName(string &output_file_name);
 
-    void SetVehicleStopTime(string &vehicle, int &stop_time);
+    void SetVehicleStopTime(const VehicleName &vehicle, int &stop_time);
+    void SetVehicleStopTime(const string &vehicle, int &stop_time);
 
     void SetStationTransitTime(string &station, int &transit_time);
 
     const string &GetOutputFileName() { return output_file_name; }
 
-    const array<string, 4> &GetVehicles() const { return vehicles; }
+    const array<string , 4> &GetVehicles() const { return vehicles; }
 
     const array<string, 3> &GetStationsTypes() const { return stations_types; }
 
-    int GetStopTimeByVehicle(const string &vehicleName) const { return vehicle_to_stop_time.at(vehicleName); }
+    int GetStopTimeByVehicle(const VehicleName vehicleName) const { return vehicle_to_stop_time.at(vehicleName); }
+
+    int GetTransitTimeByStationName(const string& stationName) const;
 
     friend ostream &operator<<(ostream &os, Config &config) {
-        map<string, int>::iterator it;
+        map<VehicleName , int>::iterator it;
         os << "Config: " << endl << "vehicle_to_stop_time = ";
         for (it = config.vehicle_to_stop_time.begin(); it != config.vehicle_to_stop_time.end(); it++) {
             os << it->first << ": " << it->second << ", ";
         }
+        map<string , int>::iterator iter;
         os << endl << "station_to_transit_time = ";
-        for (it = config.station_to_transit_time.begin(); it != config.station_to_transit_time.end(); it++) {
+        for (iter = config.station_to_transit_time.begin(); iter != config.station_to_transit_time.end(); iter++) {
             os << it->first << ": " << it->second << ", ";
         }
         os << endl;
