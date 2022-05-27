@@ -52,10 +52,10 @@ void ReadLineFromInputFile(ifstream &input_file, const string &input_file_name, 
 }
 
 VehicleName GetVehicleFromFileName(const string &file_name) {
-    if (file_name.find("bus") == 0) return BUS;
-    else if (file_name.find("tram") == 0) return TRAM;
-    else if (file_name.find("sprinter") == 0) return SPRINTER;
-    else if (file_name.find("rail") == 0) return RAIL;
+    if (file_name.find("bus") == 0) return Graph::GetVehicleTypeByName("bus");
+    else if (file_name.find("tram") == 0) return Graph::GetVehicleTypeByName("tram");
+    else if (file_name.find("sprinter") == 0) return Graph::GetVehicleTypeByName("sprinter");
+    else if (file_name.find("rail") == 0) return Graph::GetVehicleTypeByName("rail");
     else
         throw runtime_error(
                 "Error on GetVehicleFromFileName. File name " + file_name + " Not starts with vehicle name");

@@ -29,6 +29,8 @@ public:
 
     void UpdateGraph(Edge &input);
 
+    vector<vector<int>> GetTransportGraph() {return transportGraph;}
+
     string GetStationNameByIX(int ix) const;
 
     vector<string> BFS(const string &source, bool transpose = false);
@@ -43,7 +45,15 @@ public:
 
     bool IsMergedGraph() const { return isMergedGraph; }
 
-    const VehicleName &GetVehicleName() const { return vehicleName; }
+    const VehicleName GetVehicleName() const { return vehicleName; }
+
+    static bool IsSameStation(const string &node1, const string &node2);
+
+    const string GetVehicleNameString() const;
+
+    int GetDuration(string srcNode, string destNode);
+
+    static VehicleName GetVehicleTypeByName(const string name);
 };
 
 

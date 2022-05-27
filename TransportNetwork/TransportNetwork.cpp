@@ -3,6 +3,7 @@
 //
 
 #include "TransportNetwork.h"
+#include <list>
 #include <fstream>
 
 void TransportNetwork::InboundOutboundHelper(const string &nodeName, bool transpose) {
@@ -70,16 +71,80 @@ void TransportNetwork::uniExpress(const string &sourceNode, const string &destNo
     uniExpressHelper("rail", railGraph, sourceNode, destNode, config);
 }
 
+void multiExpressHelper(const Graph &g, const string &sourceNode, const string &destNode,const Config &config) {
+    try {
+        map<string, double> &&dv_vector_from_bus = g.Dijkstra(sourceNode+ "_bus", destNode, config);
+        map<string, double> &&dv_vector_from_tram = g.Dijkstra(sourceNode+ "_tram", destNode, config);
+        map<string, double> &&dv_vector_from_rail = g.Dijkstra(sourceNode+ "_rail", destNode, config);
+        map<string, double> &&dv_vector_from_sprinter = g.Dijkstra(sourceNode+ "_sprinter", destNode, config);
+        initializer_list<double> optionalDv = {dv_vector_from_bus[destNode+"_bus"], dv_vector_from_bus[destNode+"_tram"],
+            dv_vector_from_bus[destNode+"rail"], dv_vector_from_bus[destNode+"_sprinter"],
+            dv_vector_from_tram[destNode+"_bus"], dv_vector_from_tram[destNode+"_tram"],
+            dv_vector_from_tram[destNode+"_rail"], dv_vector_from_tram[destNode+"_sprinter"],
+            dv_vector_from_rail[destNode+"_bus"], dv_vector_from_rail[destNode+"_tram"],
+            dv_vector_from_rail[destNode+"_rail"], dv_vector_from_rail[destNode+"_sprinter"],
+            dv_vector_from_sprinter[destNode+"_bus"], dv_vector_from_sprinter[destNode+"_tram"],
+            dv_vector_from_sprinter[destNode+"_rail"], dv_vector_from_sprinter[destNode+"_sprinter"]};
+        Terminal::ShowOutput("Shortest time", min(optionalDv), "route unavailable");
+    }
+    catch (const exception &e) {
+        Terminal::ShowOutput("Shortest time: " + (string) e.what());
+    }
+}
+
+void TransportNetwork::BuildMergedGraph(Graph *mergedGraph) {
+    vector<Graph> allGraphs {busGraph, tramGraph, sprinterGraph, railGraph};
+    for (Graph currentGraph: allGraphs) {
+        for (string nodeName: currentGraph.GetNodesNames()){
+            for (string neighbor: currentGraph.GetNeighboursNames(nodeName)) {
+                Edge newEdge;
+                newEdge.src = nodeName + "_" + currentGraph.GetVehicleNameString();
+                newEdge.dest = neighbor + "_" + currentGraph.GetVehicleNameString();
+                try{
+                    newEdge.duration = currentGraph.GetDuration(nodeName, neighbor);
+                } catch (exception &e) {
+                    cout << "Error: " << e.what() << endl;
+                    exit(1);
+                }
+                mergedGraph->UpdateGraph(newEdge);
+            }
+        }
+    }
+    int srcIx = 0;
+    string srcName = "";
+    string destName = "";
+    for (vector<int> srcNode: mergedGraph->GetTransportGraph()) {
+        for (int destIx: srcNode) {
+            try {
+                srcName = mergedGraph->GetStationNameByIX(srcIx);
+                destName = mergedGraph->GetStationNameByIX(destIx);
+            } catch (exception &e) {
+                cout << "Error: " << e.what() << endl;
+                exit(1);
+            }
+            if (Graph::IsSameStation(srcName, destName)){
+                Edge newEdge;
+                newEdge.src = srcName;
+                newEdge.dest = destName;
+                newEdge.duration = 0;
+                mergedGraph->UpdateGraph(newEdge);
+            }
+        }
+        srcIx++;
+    }
+}
+
 void TransportNetwork::multiExpress(const string &sourceNode, const string &destNode, const Config &config) {
-    // TODO: build MergedGraph(with 0 edges from source to source_bus, source_tram...): shani
-    // TODO: Graph mergedGraph;
-    // TODO: Graph currentGraph;
-    // TODO: for(node: currentGraph.GetAllNodes())
-    // TODO:    neighbours=currentGraph.GetNeighbours(node);
-    // TODO:    Update(mergedGraph, node, neighbours, "bus");
-    // TODO:
-    // TODO:
-    // TODO: call Dijkstra on MergedGraph for each sourceNode : adir
+    if (!ContainsNode(sourceNode)) {
+        cout << sourceNode << " does not exist in the current network.\n";
+        return;
+    } else if (!ContainsNode(destNode)) {
+        cout << destNode << " does not exist in the current network.\n";
+        return;
+    }
+    Graph* mergedGraph = new Graph(true);
+    BuildMergedGraph(mergedGraph);
+    multiExpressHelper(mergedGraph, sourceNode, destNode, config);
 }
 
 void TransportNetwork::print(const string &outputFileName) {

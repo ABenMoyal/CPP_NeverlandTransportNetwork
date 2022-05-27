@@ -42,10 +42,7 @@ string Graph::GetStationNameByIX(int ix) const {
     for (auto &station: stationIXMap) {
         if (station.second == ix) return station.first;
     }
-    // TODO: ERROR
-    cout << "Graph::GetStationNameByIX ix not found but sent from vector " << endl;
-    exit(1);
-
+    throw runtime_error("Graph::GetStationNameByIX ix not found but sent from vector");
 }
 
 #define ADD_DST_STATION_AS_REACHABLE_IF_NEEDED() { \
@@ -105,7 +102,14 @@ vector<string> Graph::GetNodesNames() const {
     return stations;
 }
 
-bool IsSameStation(const string &node1, const string &node2) {
+int Graph::GetDuration(string srcNode, string destNode) {
+    if (!ContainsNode(srcNode) || !ContainsNode(destNode)) {
+        throw runtime_error("Graph::GetDuration no edge between " + srcNode + " to " + destNode);
+    }
+    return transportGraph.at(stationIXMap.at(srcNode)).at(stationIXMap.at(destNode));
+}
+
+bool Graph::IsSameStation(const string &node1, const string &node2) {
     string stationName1 = node1.substr(0, node1.rfind('_'));
     string stationName2 = node2.substr(0, node2.rfind('_'));
     return stationName1 == stationName2;
@@ -113,7 +117,17 @@ bool IsSameStation(const string &node1, const string &node2) {
 
 int GetStopTime(const string &current, const string &neighbour, const string &destNode, const Graph& graph,
                 const Config &config) {
-    if (graph.IsMergedGraph() && IsSameStation(current, neighbour)) return config.GetTransitTimeByStationName(current);
+    if (graph.IsMergedGraph()) {
+        if (Graph::IsSameStation(current, neighbour)) return config.GetTransitTimeByStationName(current);
+        if (neighbour == destNode+"_bus"  ||
+            neighbour == destNode+"_tram" ||
+            neighbour == destNode+"_rail" ||
+            neighbour == destNode+"_sprinter") return 0;
+        else {
+            size_t delimiter = current.find('_');
+            return config.GetStopTimeByVehicle(Graph::GetVehicleTypeByName(current.substr(delimiter)));
+        }
+    }
     return neighbour==destNode? 0: config.GetStopTimeByVehicle(graph.GetVehicleName());
 }
 
@@ -160,6 +174,27 @@ map<string, double> Graph::Dijkstra(const string &sourceNode, const string &dest
 //    for(auto node: dv_vector) cout << node.first << ": " << node.second << endl;
     return dv_vector;
 }
+
+const string Graph::GetVehicleNameString() const {
+    switch (vehicleName) {
+        case BUS:      return "bus";
+        case TRAM:     return "tram";
+        case SPRINTER: return "sprinter";
+        case RAIL:     return "rail";
+        default: {
+            cout << "GetVehicleNameString: wrong vehicle type" << endl;
+            exit(-1);
+        }
+    }
+}
+
+VehicleName Graph::GetVehicleTypeByName(const string name) {
+    if (name == "bus") return BUS;
+    else if (name == "tram") return TRAM;
+    else if (name == "sprinter") return SPRINTER;
+    else if (name == "rail") return RAIL;
+}
+
 
 
 // if SameStation() && GetVehicleFromStationName(source) != GetVehicleFromStationName(neighbour);

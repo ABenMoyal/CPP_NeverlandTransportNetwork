@@ -28,6 +28,8 @@ public:
     set<string> GetAllNodes();
     bool ContainsNode(const string& nodeName);
     Graph& GetGraphByVehicle(VehicleName vehicleName);
+
+    void BuildMergedGraph(Graph *mrgedGraph);
 };
 
 
